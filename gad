@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# Gandi Automatic DNS 0.3
+# Gandi Automatic DNS 0.4
 
-# Copyright (c) 2012, 2013, 2014 Brian P. Curran <brian@brianpcurran.com>
+# Copyright (c) 2012, 2013, 2014, 2015 Brian P. Curran <brian@brianpcurran.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -17,11 +17,12 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 usage() {
-  printf "\nUsage: $0 [-6] [-e] [-f] [-t] [-v] [-i EXT_IF] -a APIKEY -d EXAMPLE.COM -r \"RECORD-NAMES\"
+  printf "\nUsage: $0 [-6] [-e] [-f] [-s] [-t] [-v] [-i EXT_IF] -a APIKEY -d EXAMPLE.COM -r \"RECORD-NAMES\"
 
 -6: Update AAAA record(s) instead of A record(s)
 -e: Print debugging information to stdout
 -f: Force the creation of a new zonefile regardless of IP address discrepancy
+-s: Read IP address information from standard input
 -t: If a new version of the zonefile is created, do not activate it
 -v: Print information to stdout even if a new zonefile isn't needed
 -i: Use ifconfig instead of OpenDNS to determine external IP address
@@ -38,6 +39,7 @@ while [ $# -gt 0 ]; do
     -6) ipv6="yes";;
     -e) debug="yes";;
     -f) force="yes";;
+    -s) stdin_ip="yes";;
     -t) testing="yes";;
     -v) verbose="yes";;
     -i) ext_if="$2"; shift;;
@@ -114,7 +116,7 @@ rpc() {
   </params>
 </methodCall>"
   tmp_post="POST /xmlrpc/ HTTP/1.0
-User-Agent: Gandi Automatic DNS shell script/0.3
+User-Agent: Gandi Automatic DNS shell script/0.4
 Host: "$gandi"
 Content-Type: text/xml
 Content-Length: `printf "%s" "$tmp_xml" | wc -c | tr -d "[:space:]"`
@@ -138,7 +140,7 @@ update() {
     fi
     rpc "domain.zone.record.update" "int" "$zone_id" "int" "$new_version_id" "struct" "id" "int" "$new_record_id" "struct" "name" "string" "$1" "type" "string" "$record_type" "value" "string" "$ext_ip"
     shift
-  done    
+  done
 }
 
 create() {
@@ -176,7 +178,10 @@ check() {
 }
 
 # Get correct IP address
-if [ ! -z "$ext_if" ]; then
+if [ "$stdin_ip" = "yes" ]; then
+  ext_ip_method="standard input"
+  read ext_ip
+elif [ ! -z "$ext_if" ]; then
   ext_ip_method="ifconfig "$ext_if""
   ext_ip=`ifconfig "$ext_if" | sed -n "s/.*"$inet" \(addr:\)* *"$ip_regex".*/\2/p" | head -1`
 else
