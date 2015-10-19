@@ -230,8 +230,6 @@ if [ ! -z "$records_to_update" -o ! -z "$records_to_create" ]; then
   fi
   exit
 else
-  if [ "$verbose" = "yes" ]; then
-    printf "External IP address %s detected with %s matches records: %s. No update needed. Exiting.\n" "$ext_ip" "$ext_ip_method" "$records"
-  fi
+  printf "External IP address %s detected with %s matches records: %s. No update needed. Exiting.\n" "$ext_ip" "$ext_ip_method" "$records"
   exit
 fi
