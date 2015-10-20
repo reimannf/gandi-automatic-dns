@@ -1,7 +1,5 @@
 #!/bin/sh
 
-/usr/syno/sbin/ddnsd -e > /dev/null
-source /tmp/externalIP.result
+ip_regex="\([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\)"
 
-echo "$externalIP" | gad -s "$@"
-
+/usr/syno/sbin/ddnsd -e | sed -n "s/external IP = "$ip_regex".*/\1/p" | gad -s "$@"
