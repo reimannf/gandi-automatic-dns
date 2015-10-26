@@ -1,7 +1,3 @@
 #!/bin/sh
 
-/usr/syno/sbin/ddnsd -e > /dev/null
-source /tmp/externalIP.result
-
-echo "$externalIP" | gad -s "$@"
-
+/usr/syno/sbin/ddnsd -e | gad -s "$@"
