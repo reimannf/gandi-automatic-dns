@@ -227,9 +227,17 @@ if [ ! -z "$records_to_update" -o ! -z "$records_to_create" ]; then
   create $records_to_create
   set +f
   if [ "$testing" != "yes" ]; then
-    printf "Activating version %s of the zonefile for domain %s...\n\nopenssl s_client output and domain.zone.version.set() method response:\n\n" "$new_version_id" "$domain"
-    rpc "domain.zone.version.set" "int" "$zone_id" "int" "$new_version_id"
-    printf "\nTried to update the following %s records to %s: %s %s\n\nThere is no error checking on the RPCs so check the web interface if you want to be sure the update was successful, or look at the methodResponse from domain.zone.version.set() above (a response of "1" means success).\n" "$record_type" "$ext_ip" "$records_to_update" "$records_to_create"
+    printf "Activating version %s of the zonefile for domain %s\n" "$new_version_id" "$domain"
+    response=`rpc "domain.zone.version.set" "int" "$zone_id" "int" "$new_version_id"
+    if [ "$debug" = "yes" ]; then
+      printf "domain.zone.version.set() method response:\n%s\n" "$response"
+    fi
+    ret_code=`echo "$response" | sed -n 's/.*<value><boolean>\([0-9]\).*/\1/p'`
+    succes = "Error during"
+    if [ "$ret_code" == 1 ]; then
+      success = "Successful"
+    fi
+    printf "%s update of the following %s records to %s: %s %s" "$success" "$record_type" "$ext_ip" "$records_to_update" "$records_to_create"
   else
     printf "Created version %s of the zonefile for domain %s.\n\nTried to update the following %s records to %s: %s %s\n\nThere is no error checking on the RPCs so check the web interface if you want to be sure the update was successful.\n" "$new_version_id" "$domain" "$record_type" "$ext_ip" "$records_to_update" "$records_to_create"
   fi
