@@ -233,9 +233,9 @@ if [ ! -z "$records_to_update" -o ! -z "$records_to_create" ]; then
       printf "domain.zone.version.set() method response:\n%s\n" "$response"
     fi
     ret_code=`echo "$response" | sed -n 's/.*<value><boolean>\([0-9]\).*/\1/p'`
-    succes = "Error during"
+    success="Error during"
     if [ "$ret_code" == 1 ]; then
-      success = "Successful"
+      success="Successful"
     fi
     printf "%s update of the following %s records to %s: %s %s" "$success" "$record_type" "$ext_ip" "$records_to_update" "$records_to_create"
   else
