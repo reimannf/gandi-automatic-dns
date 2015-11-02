@@ -228,7 +228,7 @@ if [ ! -z "$records_to_update" -o ! -z "$records_to_create" ]; then
   set +f
   if [ "$testing" != "yes" ]; then
     printf "Activating version %s of the zonefile for domain %s\n" "$new_version_id" "$domain"
-    response=`rpc "domain.zone.version.set" "int" "$zone_id" "int" "$new_version_id"˚
+    response=`rpc "domain.zone.version.set" "int" "$zone_id" "int" "$new_version_id"`
     if [ "$debug" = "yes" ]; then
       printf "domain.zone.version.set() method response:\n%s\n" "$response"
     fi
