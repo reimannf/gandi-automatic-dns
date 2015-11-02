@@ -237,7 +237,7 @@ if [ ! -z "$records_to_update" -o ! -z "$records_to_create" ]; then
     if [ "$ret_code" == 1 ]; then
       success="Successful"
     fi
-    printf "%s update of the following %s records to %s: %s %s" "$success" "$record_type" "$ext_ip" "$records_to_update" "$records_to_create"
+    printf "%s update of the following %s records to %s: %s %s\n" "$success" "$record_type" "$ext_ip" "$records_to_update" "$records_to_create"
   else
     printf "Created version %s of the zonefile for domain %s.\n\nTried to update the following %s records to %s: %s %s\n\nThere is no error checking on the RPCs so check the web interface if you want to be sure the update was successful.\n" "$new_version_id" "$domain" "$record_type" "$ext_ip" "$records_to_update" "$records_to_create"
   fi
